@@ -26,6 +26,7 @@ struct cpu {
     uint8_t source2;
     uint8_t destination;
     bool halted;
+    bool flag;
 };
 
 enum opcodes:uint8_t {
@@ -42,9 +43,12 @@ enum opcodes:uint8_t {
     JMP,
     JZ,
     JNZ,
+    JF,
     LSL,
     LSR,
     ASR,
+    LT,
+    GT,
     NOP,
     POP,
     PUSH,
@@ -77,6 +81,9 @@ assembler assembler_instructions[] = {
     {JMP, "JMP", 1},
     {JZ, "JZ", 2},
     {JNZ, "JNZ", 2},
+    {JF, "JF", 1},
+    {LT, "LT", 3},
+    {GT, "GT", 3},
     {LSL, "LSL", 3},
     {LSR, "LSR", 3},
     {ASR, "ASR", 3},
@@ -141,6 +148,11 @@ void execute_instruction(const std::vector<uint8_t>& program, cpu& targetCPU) {
 
         case JZ:
         case JNZ:
+            targetCPU.source1 = reg();
+            targetCPU.source2 = reg();
+            break;
+
+        case JF:
             targetCPU.source1 = reg();
             targetCPU.source2 = reg();
             break;
@@ -227,6 +239,11 @@ void execute_instruction(const std::vector<uint8_t>& program, cpu& targetCPU) {
                 targetCPU.pc = targetCPU.registers[targetCPU.source1];
             }
             break;
+        case JF:
+            if(targetCPU.flag){
+                targetCPU.pc = targetCPU.registers[targetCPU.source1];
+            }
+            break;
         case LSL:
             targetCPU.registers[targetCPU.destination] = targetCPU.registers[targetCPU.source1] << targetCPU.registers[targetCPU.source2];
             break;
@@ -235,6 +252,12 @@ void execute_instruction(const std::vector<uint8_t>& program, cpu& targetCPU) {
             break;
         case ASR:
             targetCPU.registers[targetCPU.destination] = static_cast<int32_t>(targetCPU.registers[targetCPU.source1]) >> targetCPU.registers[targetCPU.source2];
+            break;
+        case LT:
+            targetCPU.registers[targetCPU.flag] = (targetCPU.registers[targetCPU.source1] < targetCPU.registers[targetCPU.source2]) ? 1 : 0;
+            break;
+        case GT:
+            targetCPU.registers[targetCPU.flag] = (targetCPU.registers[targetCPU.source1] > targetCPU.registers[targetCPU.source2]) ? 1 : 0;
             break;
         case NOP:
             break;
