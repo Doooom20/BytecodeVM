@@ -254,10 +254,10 @@ void execute_instruction(const std::vector<uint8_t>& program, cpu& targetCPU) {
             targetCPU.registers[targetCPU.destination] = static_cast<int32_t>(targetCPU.registers[targetCPU.source1]) >> targetCPU.registers[targetCPU.source2];
             break;
         case LT:
-            targetCPU.registers[targetCPU.flag] = (targetCPU.registers[targetCPU.source1] < targetCPU.registers[targetCPU.source2]) ? 1 : 0;
+            targetCPU.registers[targetCPU.flag] = targetCPU.registers[targetCPU.source1] < targetCPU.registers[targetCPU.source2];
             break;
         case GT:
-            targetCPU.registers[targetCPU.flag] = (targetCPU.registers[targetCPU.source1] > targetCPU.registers[targetCPU.source2]) ? 1 : 0;
+            targetCPU.registers[targetCPU.flag] = targetCPU.registers[targetCPU.source1] > targetCPU.registers[targetCPU.source2];
             break;
         case NOP:
             break;
